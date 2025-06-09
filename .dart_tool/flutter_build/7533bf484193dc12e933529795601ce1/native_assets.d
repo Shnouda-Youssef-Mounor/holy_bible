@@ -1,0 +1,1 @@
+ /home/souk/AndroidStudioProjects/holyBible/.dart_tool/flutter_build/7533bf484193dc12e933529795601ce1/native_assets.yaml: 
