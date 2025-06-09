@@ -1,16 +1,16 @@
 # holy_bible
+A Flutter app for reading the Bible in 282+ languages. A simple and open-source Bible reading app that supports over 282 languages.
 
-A new Flutter project.
+🔹 Why such a large number? Because many languages have multiple versions or editions of the Bible (e.g., modern translations, traditional versions, study editions, etc.). So, the number of Bible versions is higher than the number of languages.
 
-## Getting Started
+🎯 Key Features:
 
-This project is a starting point for a Flutter application.
+Support for 282+ languages.
 
-A few resources to get you started if this is your first Flutter project:
+Clean and user-friendly interface.
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Ability to load multiple versions per language.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+Built with Flutter – works on both Android and iOS.
+
+🛠️ Developer Friendly: This project is built using Flutter with clean code architecture and can serve as a solid starting point for similar apps.
