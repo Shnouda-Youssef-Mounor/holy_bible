@@ -1,0 +1,71 @@
+# Flutter & Dart
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.packages
+.pub-cache/
+.pub/
+build/
+generated_plugin_registrant.dart
+# IDEs
+.idea/
+.idea.*
+.vscode/
+*.iml
+
+# Obfuscation
+app.*.symbols
+# Android
+android/.gradle/
+android/app/debug
+android/app/profile
+android/app/release
+android/local.properties
+android/key.properties
+
+# iOS
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Pods
+ios/.symlinks
+ios/Runner.xcworkspace
+ios/build
+ios/.generated/
+
+# macOS
+macos/Flutter/GeneratedPluginRegistrant.swift
+macos/Pods
+macos/build
+macos/.symlinks
+macos/Flutter/ephemeral
+
+# Windows
+windows/runner/GeneratedPluginRegistrant.*
+windows/flutter/ephemeral
+windows/.dart_tool/
+windows/build
+
+# Web
+web/generated_plugin_registrant.dart
+
+# Linux
+linux/flutter/ephemeral
+linux/Flutter/ephemeral
+linux/build
+
+# IDEs
+.idea/
+.vscode/
+*.iml
+
+# Other
+*.log
+*.tmp
+*.lock
+.DS_Store
+Thumbs.db
+
+# Secrets (Optional)
+.env
+*.keystore
+pubspec.lock
