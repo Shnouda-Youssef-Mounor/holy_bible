@@ -2,11 +2,12 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-class BiblesFetch {
-  static Future<List> fetchBible() async {
+class ChaptersAudiosFetch {
+  static Future<List> fetchChapters(
+      {required String bibleId, required String bookId}) async {
     final response = await http.get(
         Uri.parse(
-            'https://api.scripture.api.bible/v1/bibles?include-full-details=true'),
+            'https://api.scripture.api.bible/v1/audio-bibles/$bibleId/books/$bookId/chapters'),
         headers: {
           "api-key": "655f5b8b156086bdc092c95e87ae3b23",
           "accept": "application/json"
@@ -19,10 +20,11 @@ class BiblesFetch {
     }
   }
 
-  static Future<Map<String, dynamic>> fetchBibleByBibleId(
-      {required String bibleId}) async {
+  static Future<Map<String, dynamic>> fetchGetChapter(
+      {required String bibleId, required String chapterId}) async {
     final response = await http.get(
-        Uri.parse('https://api.scripture.api.bible/v1/bibles/$bibleId'),
+        Uri.parse(
+            'https://api.scripture.api.bible/v1/audio-bibles/$bibleId/chapters/$chapterId?content-type=html&include-notes=false&include-titles=true&include-chapter-numbers=false&include-verse-numbers=true&include-verse-spans=false'),
         headers: {
           "api-key": "655f5b8b156086bdc092c95e87ae3b23",
           "accept": "application/json"

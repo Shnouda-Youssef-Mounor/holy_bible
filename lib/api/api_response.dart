@@ -16,7 +16,7 @@ class ApiResponse {
       print(data);
       return data['data'];
     } else {
-      throw Exception('Failed to load translations');
+      return [];
     }
   }
 
@@ -26,7 +26,7 @@ class ApiResponse {
       final data = json.decode(response.body);
       return data['books'];
     } else {
-      throw Exception('Failed to load book');
+      return [];
     }
   }
 
@@ -36,7 +36,7 @@ class ApiResponse {
       final data = json.decode(response.body);
       return data['chapters'];
     } else {
-      throw Exception('Failed to load chapters');
+      return [];
     }
   }
 
@@ -46,7 +46,7 @@ class ApiResponse {
       final data = json.decode(response.body);
       return data['verses'];
     } else {
-      throw Exception('Failed to load verses');
+      return [];
     }
   }
 
@@ -57,7 +57,7 @@ class ApiResponse {
       final data = json.decode(response.body);
       return data['translation'];
     } else {
-      throw Exception('Failed to load translation');
+      return {};
     }
   }
 }

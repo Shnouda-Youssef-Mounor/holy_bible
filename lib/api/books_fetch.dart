@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 
 class BooksFetch {
   static Future<List> fetchBooksByBibleId({required String bibleId}) async {
+    print("SSSS : $bibleId");
     final response = await http.get(
         Uri.parse(
             'https://api.scripture.api.bible/v1/bibles/$bibleId/books?include-chapters=true&include-chapters-and-sections=true'),
@@ -15,7 +16,7 @@ class BooksFetch {
       final data = json.decode(response.body);
       return data['data'];
     } else {
-      throw Exception('Failed to load translations');
+      return [];
     }
   }
 
@@ -32,7 +33,7 @@ class BooksFetch {
       final data = json.decode(response.body);
       return data['data'];
     } else {
-      throw Exception('Failed to load translations');
+      return [];
     }
   }
 }

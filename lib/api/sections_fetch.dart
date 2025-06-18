@@ -16,7 +16,7 @@ class SectionsFetch {
       final data = json.decode(response.body);
       return data['data'];
     } else {
-      throw Exception('Failed to load translations');
+      return [];
     }
   }
 }

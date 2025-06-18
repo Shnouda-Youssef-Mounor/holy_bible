@@ -2,11 +2,11 @@ import 'dart:convert';
 
 import 'package:http/http.dart' as http;
 
-class BiblesFetch {
+class AudioBiblesFetch {
   static Future<List> fetchBible() async {
     final response = await http.get(
         Uri.parse(
-            'https://api.scripture.api.bible/v1/bibles?include-full-details=true'),
+            'https://api.scripture.api.bible/v1/audio-bibles?include-full-details=true'),
         headers: {
           "api-key": "655f5b8b156086bdc092c95e87ae3b23",
           "accept": "application/json"
@@ -22,7 +22,7 @@ class BiblesFetch {
   static Future<Map<String, dynamic>> fetchBibleByBibleId(
       {required String bibleId}) async {
     final response = await http.get(
-        Uri.parse('https://api.scripture.api.bible/v1/bibles/$bibleId'),
+        Uri.parse('https://api.scripture.api.bible/v1/audio-bibles/$bibleId'),
         headers: {
           "api-key": "655f5b8b156086bdc092c95e87ae3b23",
           "accept": "application/json"
