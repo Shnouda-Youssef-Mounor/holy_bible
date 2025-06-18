@@ -1,6 +1,9 @@
+import 'dart:io' show Platform;
+
+import 'package:audioplayers/audioplayers.dart' as ap;
 import 'package:flutter/material.dart';
 import 'package:holy_bible/widgets/music_icon_animation.dart';
-import 'package:just_audio/just_audio.dart';
+import 'package:just_audio/just_audio.dart' as ja;
 
 class AudioPlayerScreen extends StatefulWidget {
   final Map<String, dynamic> content;
@@ -17,7 +20,8 @@ class AudioPlayerScreen extends StatefulWidget {
 }
 
 class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
-  late AudioPlayer _audioPlayer;
+  ja.AudioPlayer? _justAudioPlayer;
+  ap.AudioPlayer? _audioPlayersLinux;
   bool _isLoading = true;
   bool isPlay = false;
   String? _error;
@@ -32,25 +36,50 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
   }
 
   Future<void> _initAudio() async {
-    _audioPlayer = AudioPlayer();
-    try {
-      await _audioPlayer.setUrl(widget.content['resourceUrl']);
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
 
-      _audioPlayer.durationStream.listen((d) {
-        if (d != null) {
+    if (Platform.isLinux) {
+      _audioPlayersLinux = ap.AudioPlayer();
+      try {
+        await _audioPlayersLinux!
+            .play(ap.UrlSource(widget.content['resourceUrl']));
+        _audioPlayersLinux!.onDurationChanged.listen((d) {
           setState(() {
             _duration = d;
           });
-        }
-      });
-
-      _audioPlayer.positionStream.listen((p) {
-        setState(() {
-          _position = p;
         });
-      });
-    } catch (e) {
-      _error = "Failed to load audio: $e";
+        _audioPlayersLinux!.onPositionChanged.listen((p) {
+          setState(() {
+            _position = p;
+          });
+        });
+      } catch (e) {
+        _error = "Linux audio failed: $e";
+      }
+    } else {
+      _justAudioPlayer = ja.AudioPlayer();
+      try {
+        await _justAudioPlayer!.setUrl(widget.content['resourceUrl']);
+
+        _justAudioPlayer!.durationStream.listen((d) {
+          if (d != null) {
+            setState(() {
+              _duration = d;
+            });
+          }
+        });
+
+        _justAudioPlayer!.positionStream.listen((p) {
+          setState(() {
+            _position = p;
+          });
+        });
+      } catch (e) {
+        _error = "Mobile audio failed: $e";
+      }
     }
 
     setState(() {
@@ -60,39 +89,55 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
 
   @override
   void dispose() {
-    _audioPlayer.dispose();
+    if (Platform.isLinux) {
+      _audioPlayersLinux?.dispose();
+    } else {
+      _justAudioPlayer?.dispose();
+    }
     super.dispose();
   }
 
   String _formatDuration(Duration duration) {
     final twoDigits = (int n) => n.toString().padLeft(2, '0');
-    final hours = duration.inHours;
     final minutes = duration.inMinutes.remainder(60);
     final seconds = duration.inSeconds.remainder(60);
-    return hours > 0
-        ? "${twoDigits(hours)}:${twoDigits(minutes)}:${twoDigits(seconds)}"
-        : "${twoDigits(minutes)}:${twoDigits(seconds)}";
+    return "${twoDigits(minutes)}:${twoDigits(seconds)}";
   }
 
-  @override
-  void didUpdateWidget(covariant AudioPlayerScreen oldWidget) {
-    super.didUpdateWidget(oldWidget);
-    if (oldWidget.content['resourceUrl'] != widget.content['resourceUrl']) {
-      _initAudio(); // Re-initialize audio when content changes
-      print(true);
+  void _playPause() {
+    setState(() {
+      isPlay = !isPlay;
+    });
+
+    if (Platform.isLinux) {
+      if (isPlay) {
+        _audioPlayersLinux?.resume();
+      } else {
+        _audioPlayersLinux?.pause();
+      }
+    } else {
+      if (isPlay) {
+        _justAudioPlayer?.play();
+      } else {
+        _justAudioPlayer?.pause();
+      }
+    }
+  }
+
+  void _seek(Duration newPos) {
+    if (Platform.isLinux) {
+      _audioPlayersLinux?.seek(newPos);
+    } else {
+      _justAudioPlayer?.seek(newPos);
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading) {
-      return const Center(child: CircularProgressIndicator());
-    }
-
+    if (_isLoading) return const Center(child: CircularProgressIndicator());
     if (_error != null) {
       return Center(
-        child: Text(_error!, style: const TextStyle(color: Colors.red)),
-      );
+          child: Text(_error!, style: const TextStyle(color: Colors.red)));
     }
 
     return Padding(
@@ -100,12 +145,12 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          // Controls Row
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              // Previous Button
               IconButton(
-                icon: const Icon(Icons.skip_previous, color: Colors.black),
+                icon: const Icon(Icons.skip_previous),
                 iconSize: 40,
                 onPressed: widget.content['previous'] == null
                     ? null
@@ -115,16 +160,12 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
                         await _initAudio();
                       },
               ),
-
-              // Music Icon
               Padding(
-                padding: EdgeInsets.symmetric(horizontal: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: MusicIconAnimation(isPlaying: isPlay),
               ),
-
-              // Next Button
               IconButton(
-                icon: const Icon(Icons.skip_next, color: Colors.black),
+                icon: const Icon(Icons.skip_next),
                 iconSize: 40,
                 onPressed: widget.content['next'] == null
                     ? null
@@ -135,6 +176,7 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
               ),
             ],
           ),
+
           const SizedBox(height: 30),
 
           // Slider
@@ -142,15 +184,11 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
             value: _position.inSeconds.toDouble(),
             min: 0,
             max: _duration.inSeconds.toDouble(),
-            onChanged: (value) {
-              final position = Duration(seconds: value.toInt());
-              _audioPlayer.seek(position);
-            },
+            onChanged: (value) => _seek(Duration(seconds: value.toInt())),
             activeColor: Colors.purple,
             inactiveColor: Colors.purple[100],
           ),
 
-          // Time Labels
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
@@ -163,21 +201,18 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
 
           const SizedBox(height: 30),
 
-          // Playback Buttons
+          // Play/Pause Row
           Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               IconButton(
-                icon: const Icon(Icons.replay_10, size: 32),
-                onPressed: () {
-                  final newPosition = _position - const Duration(seconds: 10);
-                  _audioPlayer.seek(newPosition >= Duration.zero
-                      ? newPosition
-                      : Duration.zero);
-                },
+                icon: const Icon(Icons.replay_10),
+                iconSize: 32,
+                onPressed: () => _seek(_position - const Duration(seconds: 10)),
               ),
               const SizedBox(width: 20),
               ElevatedButton(
+                onPressed: _playPause,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.purple,
                   padding:
@@ -185,27 +220,17 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30)),
                 ),
-                onPressed: () {
-                  if (isPlay) {
-                    _audioPlayer.pause();
-                  } else {
-                    _audioPlayer.play();
-                  }
-                  setState(() {
-                    isPlay = !isPlay;
-                  });
-                },
-                child: Icon(isPlay ? Icons.pause : Icons.play_arrow,
-                    size: 32, color: Colors.white),
+                child: Icon(
+                  isPlay ? Icons.pause : Icons.play_arrow,
+                  size: 32,
+                  color: Colors.white,
+                ),
               ),
               const SizedBox(width: 20),
               IconButton(
-                icon: const Icon(Icons.forward_10, size: 32),
-                onPressed: () {
-                  final newPosition = _position + const Duration(seconds: 10);
-                  _audioPlayer
-                      .seek(newPosition < _duration ? newPosition : _duration);
-                },
+                icon: const Icon(Icons.forward_10),
+                iconSize: 32,
+                onPressed: () => _seek(_position + const Duration(seconds: 10)),
               ),
             ],
           ),

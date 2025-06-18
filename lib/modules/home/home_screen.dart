@@ -129,7 +129,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                       AnimatedSwitcher(
                         duration: const Duration(milliseconds: 400),
-                        child: hasChapter
+                        child: hasBibleAudio && hasChapterAudio
                             ? _buildActionButton(
                                 context,
                                 icon: Icons.headphones,
