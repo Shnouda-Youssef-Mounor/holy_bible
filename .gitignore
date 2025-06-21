@@ -12,6 +12,7 @@ generated_plugin_registrant.dart
 .idea.*
 .vscode/
 *.iml
+pubspec.lock
 
 # Obfuscation
 app.*.symbols
