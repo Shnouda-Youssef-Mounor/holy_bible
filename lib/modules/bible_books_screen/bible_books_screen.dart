@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/Helper/cache_helper.dart';
 import 'package:holy_bible/api/chapters_fetch.dart';
 import 'package:holy_bible/api/sections_fetch.dart';
@@ -23,6 +24,7 @@ class _BibleBooksScreenState extends State<BibleBooksScreen>
   List<dynamic> chapters = [];
   List<dynamic> sections = [];
   late AnimationController _controller;
+  String token = dotenv.env['API_TOKEN'] ?? "";
 
   @override
   void initState() {
@@ -45,14 +47,10 @@ class _BibleBooksScreenState extends State<BibleBooksScreen>
       final bookId = book['id'];
 
       chapters = await ChaptersFetch.fetchChapters(
-        bibleId: bibleId,
-        bookId: bookId,
-      );
+          bibleId: bibleId, bookId: bookId, token: token);
       await CacheHelper.saveData(key: "bookId", value: bookId);
       sections = await SectionsFetch.fetchChapterSection(
-        bibleId: bibleId,
-        bookId: bookId,
-      );
+          bibleId: bibleId, bookId: bookId, token: token);
 
       if (!mounted) return;
       Navigator.push(

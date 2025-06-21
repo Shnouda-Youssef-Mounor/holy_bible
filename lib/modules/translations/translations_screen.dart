@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/Helper/cache_helper.dart';
 import 'package:holy_bible/api/bibles_fetch.dart';
 import 'package:holy_bible/modules/bible_books_screen/book_content_screen.dart';
@@ -138,9 +139,10 @@ class _TranslationsScreenState extends State<TranslationsScreen> {
                     child: InkWell(
                       borderRadius: BorderRadius.circular(12),
                       onTap: () async {
+                        String token = dotenv.env['API_TOKEN'] ?? "";
+
                         final data = await BiblesFetch.fetchBibleByBibleId(
-                          bibleId: translation['id'],
-                        );
+                            bibleId: translation['id'], token: token);
                         setState(() {
                           _bookContent = data;
                         });

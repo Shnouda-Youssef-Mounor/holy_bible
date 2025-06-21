@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/Helper/cache_helper.dart';
 import 'package:holy_bible/modules/welcome/welcome_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized(); // Ensure Flutter is initialized
   await CacheHelper.init(); // Initialize SharedPreferences
+  await dotenv.load(fileName: ".env");
   runApp(const MyApp());
 }
 

@@ -41,7 +41,7 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
       _error = null;
     });
 
-    if (Platform.isLinux) {
+    if (Platform.isLinux || Platform.isWindows || Platform.isMacOS) {
       _audioPlayersLinux = ap.AudioPlayer();
       try {
         await _audioPlayersLinux!
@@ -55,6 +55,9 @@ class _AudioPlayerScreenState extends State<AudioPlayerScreen> {
           setState(() {
             _position = p;
           });
+        });
+        setState(() {
+          isPlay = true;
         });
       } catch (e) {
         _error = "Linux audio failed: $e";

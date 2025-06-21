@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/api/books_fetch.dart';
 import 'package:holy_bible/modules/bible_books_screen/bible_books_screen.dart';
 
@@ -134,8 +135,10 @@ class BookContentScreen extends StatelessWidget {
             Center(
               child: ElevatedButton.icon(
                 onPressed: () async {
+                  String token = dotenv.env['API_TOKEN'] ?? "";
+
                   final data = await BooksFetch.fetchBooksByBibleId(
-                      bibleId: content['id']);
+                      token: token, bibleId: content['id']);
                   _books = data;
                   Navigator.push(
                     context,

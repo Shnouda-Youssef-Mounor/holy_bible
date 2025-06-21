@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/api/api_response.dart';
 import 'package:holy_bible/api/audio_bibles_fetch.dart';
 import 'package:holy_bible/audios/audios_languages_screen.dart';
@@ -22,6 +23,7 @@ class _MainScreenState extends State<MainScreen> {
     TranslationsScreen(translations: []),
     AudiosLanguagesScreen(audios: []),
   ]; // Define the screens list
+  String token = dotenv.env['API_TOKEN'] ?? "";
 
   @override
   @override
@@ -32,7 +34,7 @@ class _MainScreenState extends State<MainScreen> {
 
   Future<void> loadData() async {
     final translationsData = await ApiResponse.fetchTranslations();
-    final audiosData = await AudioBiblesFetch.fetchBible();
+    final audiosData = await AudioBiblesFetch.fetchBible(token);
 
     setState(() {
       translations = translationsData;
@@ -47,6 +49,27 @@ class _MainScreenState extends State<MainScreen> {
   }
 
   void _onItemTapped(int index) {
+    if (isLoading) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Row(
+            children: const [
+              Icon(Icons.hourglass_bottom, color: Colors.white),
+              SizedBox(width: 12),
+              Expanded(child: Text("Please wait, data is still loading...")),
+            ],
+          ),
+          backgroundColor: Colors.deepPurple,
+          behavior: SnackBarBehavior.floating,
+          margin: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16),
+          ),
+          duration: const Duration(seconds: 2),
+        ),
+      );
+      return;
+    }
     setState(() {
       _selectedIndex = index;
     });
@@ -55,17 +78,7 @@ class _MainScreenState extends State<MainScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: isLoading
-          ? Center(
-              child: CircularProgressIndicator(
-              color: Colors.purple,
-              semanticsValue: "Loading",
-              strokeAlign: 2,
-              strokeWidth: 10,
-              semanticsLabel: "Loading",
-              backgroundColor: Colors.black,
-            ))
-          : _screens[_selectedIndex],
+      body: _screens[_selectedIndex],
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Colors.deepPurple,
         currentIndex: _selectedIndex,

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:holy_bible/modules/main/main_screen.dart';
 
 class WelcomeScreen extends StatefulWidget {
@@ -95,32 +96,68 @@ class _WelcomeScreenState extends State<WelcomeScreen>
                 const SizedBox(height: 40),
                 SlideTransition(
                   position: _slideAnimation,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const MainScreen(),
+                  child: GestureDetector(
+                    onTapDown: (_) => HapticFeedback.lightImpact(),
+                    child: ElevatedButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                              builder: (context) => const MainScreen()),
+                        );
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.white,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 15),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30),
                         ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.white,
-                      padding: const EdgeInsets.symmetric(
-                        horizontal: 40,
-                        vertical: 15,
+                        elevation: 6,
+                        shadowColor: Colors.purple.withOpacity(0.3),
                       ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      elevation: 8,
-                    ),
-                    child: const Text(
-                      'Get Started',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.purple,
+                      child: ShaderMask(
+                        blendMode: BlendMode.srcIn,
+                        shaderCallback: (Rect bounds) {
+                          return const LinearGradient(
+                            colors: [Colors.deepPurple, Colors.purpleAccent],
+                            begin: Alignment.topLeft,
+                            end: Alignment.bottomRight,
+                          ).createShader(bounds);
+                        },
+                        child: Hero(
+                            tag: 'holyBible',
+                            flightShuttleBuilder: (flightContext, animation,
+                                direction, fromContext, toContext) {
+                              return ScaleTransition(
+                                scale: animation.drive(
+                                    Tween(begin: 0.8, end: 1.2).chain(
+                                        CurveTween(curve: Curves.easeInOut))),
+                                child: Icon(Icons.star,
+                                    size: 100, color: Colors.amber),
+                              );
+                            },
+                            placeholderBuilder: (context, size, child) {
+                              return Opacity(
+                                opacity: 0.3,
+                                child: child,
+                              );
+                            },
+                            createRectTween: (begin, end) {
+                              return MaterialRectArcTween(
+                                  begin: begin,
+                                  end: end); // حركة منحنية بدلاً من خط مستقيم
+                            },
+                            child: const Text(
+                              'Get Started',
+                              style: TextStyle(
+                                fontSize: 22,
+                                fontWeight: FontWeight.bold,
+                                color: Colors
+                                    .white, // this will be overridden by the gradient
+                                letterSpacing: 1.2,
+                              ),
+                            )),
                       ),
                     ),
                   ),

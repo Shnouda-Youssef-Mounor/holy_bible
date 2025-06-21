@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/Helper/cache_helper.dart';
 import 'package:holy_bible/api/chapters_audios_fetch.dart';
 import 'package:holy_bible/widgets/audio_player_screen.dart';
@@ -27,9 +28,12 @@ class _ChapterContentAudioScreenState extends State<ChapterContentAudioScreen> {
 
   Future<void> loadChapter(String chapterId) async {
     final bibleId = content['bibleId'];
+    String token = dotenv.env['API_TOKEN'] ?? "";
+
     try {
       final data = await ChaptersAudiosFetch.fetchGetChapter(
         bibleId: bibleId,
+        token: token,
         chapterId: chapterId,
       );
       setState(() {

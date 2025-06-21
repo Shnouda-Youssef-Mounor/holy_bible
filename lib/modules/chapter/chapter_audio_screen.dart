@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/Helper/cache_helper.dart';
 import 'package:holy_bible/api/chapters_audios_fetch.dart';
 import 'package:holy_bible/modules/chapter/chapter_content_audio_screen.dart';
@@ -15,6 +16,7 @@ class _ChapterAudioScreenState extends State<ChapterAudioScreen>
     with TickerProviderStateMixin {
   List<dynamic> dataChapters = [];
   Map<String, dynamic> verses = {};
+  String token = dotenv.env['API_TOKEN'] ?? "";
 
   @override
   void initState() {
@@ -98,6 +100,7 @@ class _ChapterAudioScreenState extends State<ChapterAudioScreen>
                               onTap: () async {
                                 await ChaptersAudiosFetch.fetchGetChapter(
                                   bibleId: chapter['bibleId'],
+                                  token: token,
                                   chapterId: chapter['id'],
                                 ).then((data) {
                                   verses = data;

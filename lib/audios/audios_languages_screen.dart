@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/Helper/cache_helper.dart';
 import 'package:holy_bible/api/audio_bibles_fetch.dart';
 import 'package:holy_bible/modules/bible_books_screen/book_content_audio_screen.dart';
@@ -19,6 +20,7 @@ class _AudiosLanguagesScreenState extends State<AudiosLanguagesScreen> {
   Set<String> languageSet = {};
   String? selectedLanguage;
   List<String> languages = [];
+  String token = dotenv.env['API_TOKEN'] ?? "";
 
   @override
   void initState() {
@@ -56,25 +58,13 @@ class _AudiosLanguagesScreenState extends State<AudiosLanguagesScreen> {
           const SizedBox(height: 16),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
-            child: Text(
-              "Languages: ${filterList.length}",
-              style: const TextStyle(color: Colors.grey),
-            ),
-          ),
-          const SizedBox(height: 16),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16),
             child: Row(
               children: [
                 const Icon(Icons.language, color: Colors.purple),
                 const SizedBox(width: 8),
                 Text(
-                  "Filter by Language",
-                  style: const TextStyle(
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.purple,
-                  ),
+                  "Languages: ${filterList.length}",
+                  style: const TextStyle(color: Colors.grey),
                 ),
               ],
             ),
@@ -175,7 +165,7 @@ class _AudiosLanguagesScreenState extends State<AudiosLanguagesScreen> {
                           onTap: () async {
                             final data =
                                 await AudioBiblesFetch.fetchBibleByBibleId(
-                                    bibleId: audio['id']);
+                                    bibleId: audio['id'], token: token);
                             CacheHelper.saveData(
                                 key: "audioBibleId", value: audio['id']);
                             Navigator.push(

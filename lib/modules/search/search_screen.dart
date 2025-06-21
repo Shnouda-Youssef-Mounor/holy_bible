@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/Helper/cache_helper.dart';
 import 'package:holy_bible/api/chapters_fetch.dart';
 import 'package:holy_bible/api/search_fetch.dart';
@@ -81,7 +82,10 @@ class _SearchScreenState extends State<SearchScreen> {
                     setState(() {
                       isLoading = true;
                     });
+                    String token = dotenv.env['API_TOKEN'] ?? "";
+
                     await SearchFetch.fetchForSearch(
+                            token: token,
                             bibleId:
                                 CacheHelper.getData(key: "bibleId").toString(),
                             text: _searchController.text)
@@ -258,8 +262,11 @@ class _SearchScreenState extends State<SearchScreen> {
                           ),
                           trailing: IconButton(
                             onPressed: () async {
+                              String token = dotenv.env['API_TOKEN'] ?? "";
+
                               await ChaptersFetch.fetchGetChapter(
                                       bibleId: section['bibleId'],
+                                      token: token,
                                       chapterId: section['chapterId'])
                                   .then((data) {
                                 content = data;

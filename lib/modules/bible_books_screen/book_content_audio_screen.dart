@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/api/book_fetch_audio.dart';
 import 'package:holy_bible/modules/bible_books_screen/bible_books_audios_screen.dart';
 
@@ -7,6 +8,7 @@ class BookContentAudioScreen extends StatelessWidget {
   BookContentAudioScreen({super.key, required this.content});
 
   final List<dynamic> _books = [];
+  String token = dotenv.env['API_TOKEN'] ?? "";
 
   @override
   Widget build(BuildContext context) {
@@ -55,7 +57,7 @@ class BookContentAudioScreen extends StatelessWidget {
               child: ElevatedButton.icon(
                 onPressed: () async {
                   await BookFetchAudio.fetchBooksByBibleId(
-                          bibleId: content['id'])
+                          bibleId: content['id'], token: token)
                       .then((data) {
                     _books.addAll(data);
                   });

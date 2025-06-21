@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:holy_bible/Helper/cache_helper.dart';
 import 'package:holy_bible/api/chapters_fetch.dart';
 import 'package:holy_bible/modules/chapter/chapter_content_screen.dart';
@@ -23,6 +24,7 @@ class _ChapterScreenState extends State<ChapterScreen>
   late Animation<double> _fadeAnimation;
 
   Map<String, dynamic> verses = {};
+  String token = dotenv.env['API_TOKEN'] ?? "";
 
   @override
   void initState() {
@@ -48,6 +50,7 @@ class _ChapterScreenState extends State<ChapterScreen>
   }) async {
     verses = await ChaptersFetch.fetchGetChapter(
       bibleId: bibleId,
+      token: token,
       chapterId: chapterId,
     );
     await CacheHelper.saveData(key: "chapterId", value: chapterId);

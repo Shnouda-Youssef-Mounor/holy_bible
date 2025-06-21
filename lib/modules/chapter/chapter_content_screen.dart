@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_html/flutter_html.dart';
 import 'package:holy_bible/Helper/cache_helper.dart';
 import 'package:holy_bible/api/chapters_fetch.dart';
@@ -25,8 +26,11 @@ class _ChapterContentScreenState extends State<ChapterContentScreen> {
   }
 
   void _updateContent(String chapterId) async {
+    String token = dotenv.env['API_TOKEN'] ?? "";
+
     final data = await ChaptersFetch.fetchGetChapter(
       bibleId: content['bibleId'],
+      token: token,
       chapterId: chapterId,
     );
     setState(() {
